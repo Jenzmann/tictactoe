@@ -10,14 +10,14 @@ import tictactoe.spieler.ILernenderSpieler;
 import java.io.IOException;
 import java.util.Random;
 
-public class ReinforcementSpieler implements ILernenderSpieler {
+public class Spieler implements ILernenderSpieler {
     private String name;
     private Farbe farbe;
     private Spielfeld spielfeld;
 
     private QLearningAgent qAgent = new QLearningAgent();
 
-    public ReinforcementSpieler(String name) {
+    public Spieler(String name) {
         this.name = name;
     }
 

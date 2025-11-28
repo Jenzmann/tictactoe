@@ -1,4 +1,4 @@
-import spieler.ReinforcementSpieler;
+import spieler.Spieler;
 import tictactoe.TicTacToe;
 import tictactoe.spieler.AbbruchNachIterationen;
 import tictactoe.spieler.ILernenderSpieler;
@@ -11,7 +11,7 @@ public static void main(String[] args) {
     // Fügen Sie nachfolgend Ihren eigenen lernenden Spieler ein.
     // Dieser muss die Schnittstelle ILernenderSpieler implementieren
     // Der hier nachfolgende Spieler ist nur ein (nicht funktionierendes) Muster
-    ILernenderSpieler spieler2 = new ReinforcementSpieler("Lernender Spieler");
+    ILernenderSpieler spieler2 = new Spieler("Lernender Spieler");
 
     TicTacToe spiel = new TicTacToe();
     ISpieler gewinner;
