@@ -51,6 +51,7 @@ public static void main(String[] args) {
     System.out.println("Training beendet. Gesamtdauer in Sekunden: " + ((endtime - starttime) / 1000));
     System.out.println(spieler1.getName() + " gegen " + spieler2.getName());
     System.out.println("=======================================================");
+
     for (long i = 0; i < 1000; i++) {
         gewinner = spiel.neuesSpiel(spieler1, spieler2, 150, false);
         if (gewinner == spieler1) {
@@ -67,6 +68,7 @@ public static void main(String[] args) {
                 gewinne2++;
         }
     }
+
     System.out.println(
             "Gewinne " + spieler1.getName() + ": " + gewinne1 + ". Gewinne " + spieler2.getName() + ": " + gewinne2);
     System.out.println();
@@ -77,5 +79,4 @@ public static void main(String[] args) {
     System.out.println("Ein Einzelspiel im DEBUG-Modus, lernender Spieler zweiter mit O");
     System.out.println("===============================================================");
     System.out.println("Gewonnen hat: " + spiel.neuesSpiel(spieler1, spieler2, 150, true).getName());
-
 }

@@ -5,32 +5,22 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
-import java.io.Serial;
 import java.io.Serializable;
 import java.util.HashMap;
 import java.util.Random;
 
 public class QLearningAgent implements Serializable {
-    @Serial
-    private static final long serialVersionUID = 1L;
-
     private final HashMap<String, double[]> qTable = new HashMap<>();
 
-    private double explorationsrate = 0.9;
+    double learningRate = 0.1;
+    private double explorationRate = 0.9;
 
     private final transient Random random = new Random();
 
-    /**
-     * Wählt die beste Aktion basierend auf dem aktuellen Zustand.
-     * @param state Der String, der das Brett repräsentiert.
-     * @param validMoves Ein Array von booleans, welche Felder frei sind.
-     * @param isTraining Wenn true, wird manchmal zufällig gezogen (Exploration).
-     * @return Der Index (0-8) des gewählten Feldes.
-     */
     public int getAction(String state, boolean[] validMoves, boolean isTraining) {
         qTable.putIfAbsent(state, new double[9]);
 
-        if (isTraining && random.nextDouble() < explorationsrate) {
+        if (isTraining && random.nextDouble() < explorationRate) {
             return getRandomMove(validMoves);
         }
 
@@ -61,6 +51,10 @@ public class QLearningAgent implements Serializable {
     }
 
     public void train(String stateOld, int action, double reward, String stateNew, boolean[] validMovesNew) {
+        if (action == -1) {
+            return;
+        }
+
         qTable.putIfAbsent(stateOld, new double[9]);
         qTable.putIfAbsent(stateNew, new double[9]);
 
@@ -85,21 +79,19 @@ public class QLearningAgent implements Serializable {
         }
 
         // Hyperparameter
-        double lernrage = 0.1;
-        double zukunftsgewichtung = 0.9;
-        double newQ = currentQ + lernrage * (reward + (zukunftsgewichtung * maxNextQ) - currentQ);
+        double newQ = currentQ + learningRate * (reward + (explorationRate * maxNextQ) - currentQ);
 
         oldQValues[action] = newQ;
     }
 
     public void decayEpsilon() {
-        if (explorationsrate > 0.01) {
-            explorationsrate *= 0.99995;
+        if (explorationRate > 0.01) {
+            explorationRate *= 0.99995;
         }
     }
 
-    public void setExplorationsrate(double eps) {
-        this.explorationsrate = eps;
+    public void setExplorationRate(double eps) {
+        this.explorationRate = eps;
     }
 
     public void save(String path) throws IOException {
