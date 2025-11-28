@@ -69,13 +69,17 @@ public static void main(String[] args) {
     }
     System.out.println(
             "Gewinne " + spieler1.getName() + ": " + gewinne1 + ". Gewinne " + spieler2.getName() + ": " + gewinne2);
-    System.out.println();
-    System.out.println("Ein Einzelspiel im DEBUG-Modus, lernender Spieler startet mit X");
-    System.out.println("===============================================================");
-    System.out.println("Gewonnen hat: " + spiel.neuesSpiel(spieler2, spieler1, 150, true).getName());
-    System.out.println();
-    System.out.println("Ein Einzelspiel im DEBUG-Modus, lernender Spieler zweiter mit O");
-    System.out.println("===============================================================");
-    System.out.println("Gewonnen hat: " + spiel.neuesSpiel(spieler1, spieler2, 150, true).getName());
+    // System.out.println();
+    // System.out.println("Ein Einzelspiel im DEBUG-Modus, lernender Spieler startet
+    // mit X");
+    // System.out.println("===============================================================");
+    // System.out.println("Gewonnen hat: " + spiel.neuesSpiel(spieler2, spieler1,
+    // 150, true).getName());
+    // System.out.println();
+    // System.out.println("Ein Einzelspiel im DEBUG-Modus, lernender Spieler zweiter
+    // mit O");
+    // System.out.println("===============================================================");
+    // System.out.println("Gewonnen hat: " + spiel.neuesSpiel(spieler1, spieler2,
+    // 150, true).getName());
 
 }
