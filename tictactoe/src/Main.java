@@ -8,9 +8,9 @@ import tictactoe.spieler.beispiel.Zufallsspieler;
 public static void main(String[] args) {
     ISpieler spieler1 = new Zufallsspieler("Zufall");
 
-    //Fügen Sie nachfolgend Ihren eigenen lernenden Spieler ein.
-    //Dieser muss die Schnittstelle ILernenderSpieler implementieren
-    //Der hier nachfolgende Spieler ist nur ein (nicht funktionierendes) Muster
+    // Fügen Sie nachfolgend Ihren eigenen lernenden Spieler ein.
+    // Dieser muss die Schnittstelle ILernenderSpieler implementieren
+    // Der hier nachfolgende Spieler ist nur ein (nicht funktionierendes) Muster
     ILernenderSpieler spieler2 = new ReinforcementSpieler("Lernender Spieler");
 
     TicTacToe spiel = new TicTacToe();
@@ -37,12 +37,13 @@ public static void main(String[] args) {
                 gewinne2++;
         }
     }
-    System.out.println("Gewinne " + spieler1.getName() + ": " + gewinne1 + ". Gewinne " + spieler2.getName() + ": " + gewinne2);
+    System.out.println(
+            "Gewinne " + spieler1.getName() + ": " + gewinne1 + ". Gewinne " + spieler2.getName() + ": " + gewinne2);
     System.out.println();
 
     gewinne1 = 0;
     gewinne2 = 0;
-    //Hier würde jetzt das Training kommen!
+    // Hier würde jetzt das Training kommen!
     System.out.println("Starte Training mit 200000 Iterationen. Bitte haben Sie etwas Geduld!");
     long starttime = System.currentTimeMillis();
     spieler2.trainieren(new AbbruchNachIterationen(200000));
@@ -66,7 +67,8 @@ public static void main(String[] args) {
                 gewinne2++;
         }
     }
-    System.out.println("Gewinne " + spieler1.getName() + ": " + gewinne1 + ". Gewinne " + spieler2.getName() + ": " + gewinne2);
+    System.out.println(
+            "Gewinne " + spieler1.getName() + ": " + gewinne1 + ". Gewinne " + spieler2.getName() + ": " + gewinne2);
     System.out.println();
     System.out.println("Ein Einzelspiel im DEBUG-Modus, lernender Spieler startet mit X");
     System.out.println("===============================================================");

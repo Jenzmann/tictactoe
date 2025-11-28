@@ -31,29 +31,34 @@ public class ReinforcementSpieler implements ILernenderSpieler {
 
     }
 
+    // DONE
     @Override
     public void neuesSpiel(Farbe farbe, int i) {
-
+        this.farbe = farbe;
     }
 
+    // DONE
     @Override
     public String getName() {
-        return "";
+        return this.name;
     }
 
+    // DONE
     @Override
     public void setName(String s) {
-
+        this.name = s;
     }
 
+    // DONE
     @Override
     public Farbe getFarbe() {
-        return null;
+        return farbe;
     }
 
+    // DONE
     @Override
     public void setFarbe(Farbe farbe) {
-
+        this.farbe = farbe;
     }
 
     @Override
