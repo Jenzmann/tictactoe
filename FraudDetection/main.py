@@ -143,4 +143,4 @@ print("Vorhersage abgeschlossen. Beispiel:")
 print(df_new[['BESTELLIDENT', 'PROGNOSE_BETRUG']].head())
 
 # Export
-# df_new.to_csv('Ergebnis_Klassifizierung.csv', index=False, sep=';')
+df_new.to_csv('Ergebnis_Klassifizierung.csv', index=False, sep=';')
