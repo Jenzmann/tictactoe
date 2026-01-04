@@ -8,9 +8,22 @@ import tictactoe.spieler.IAbbruchbedingung;
 import tictactoe.spieler.ILernenderSpieler;
 
 import java.io.IOException;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Random;
 
 public class Spieler implements ILernenderSpieler {
+
+    private static class StateActionPair {
+        String state;
+        int action;
+
+        StateActionPair(String state, int action) {
+            this.state = state;
+            this.action = action;
+        }
+    }
+
     private String name;
     private Farbe farbe;
     private Spielfeld spielfeld;
@@ -35,7 +48,6 @@ public class Spieler implements ILernenderSpieler {
         }
 
         System.out.println("\nTraining abgeschlossen. Epsilon ist jetzt: " + 0.1);
-
         return true;
     }
 
@@ -46,35 +58,29 @@ public class Spieler implements ILernenderSpieler {
         Farbe agentFarbe = agentIstDran ? farbe1 : farbe2;
         Farbe gegnerFarbe = agentFarbe.opposite();
 
-        boolean spielLaeuft = true;
+        List<StateActionPair> episode = new ArrayList<>();
 
-        String lastState = null;
-        int lastAction = -1;
+        boolean spielLaeuft = true;
+        double finalReward = 0.0;
 
         while (spielLaeuft) {
             if (agentIstDran) {
-                String currentState = getBoardStateString(spielfeld);
+                String state = getBoardStateString(spielfeld);
                 boolean[] validMoves = getValidMoves();
 
-                if (lastState != null) {
-                    qAgent.train(lastState, lastAction, 0.0, currentState, validMoves);
-                }
-
-                int action = qAgent.getAction(currentState, validMoves, true);
+                int action = qAgent.getAction(state, validMoves, true);
+                episode.add(new StateActionPair(state, action));
 
                 int row = action / 3;
                 int column = action % 3;
                 spielfeld.setFarbe(row, column, agentFarbe);
 
-                lastState = currentState;
-                lastAction = action;
-
                 Spielstand stand = spielfeld.pruefeGewinn(agentFarbe);
                 if (stand == Spielstand.GEWONNEN) {
-                    qAgent.train(lastState, lastAction, 1.0, getBoardStateString(spielfeld), new boolean[9]);
+                    finalReward = 1.0;
                     spielLaeuft = false;
                 } else if (stand == Spielstand.UNENTSCHIEDEN) {
-                    qAgent.train(lastState, lastAction, 0.5, getBoardStateString(spielfeld), new boolean[9]);
+                    finalReward = 0.5;
                     spielLaeuft = false;
                 }
 
@@ -89,16 +95,23 @@ public class Spieler implements ILernenderSpieler {
 
                 Spielstand stand = spielfeld.pruefeGewinn(gegnerFarbe);
                 if (stand == Spielstand.GEWONNEN) {
-                    String finalState = getBoardStateString(spielfeld);
-                    qAgent.train(lastState, lastAction, -1.0, finalState, new boolean[9]);
+                    finalReward = -1.0;
                     spielLaeuft = false;
                 } else if (stand == Spielstand.UNENTSCHIEDEN) {
-                    String finalState = getBoardStateString(spielfeld);
-                    qAgent.train(lastState, lastAction, 0.5, finalState, new boolean[9]);
+                    finalReward = 0.5;
                     spielLaeuft = false;
                 }
+
                 agentIstDran = true;
             }
+        }
+
+        // Apply the same final reward to ALL agent moves
+        String terminalState = getBoardStateString(spielfeld);
+        boolean[] noMoves = new boolean[9];
+
+        for (StateActionPair pair : episode) {
+            qAgent.train(pair.state, pair.action, finalReward, terminalState, noMoves);
         }
     }
 
@@ -145,21 +158,24 @@ public class Spieler implements ILernenderSpieler {
     @Override
     public Zug berechneZug(Zug vorherigerZug, long zeitKreis, long zeitKreuz) {
         if (vorherigerZug != null)
-            spielfeld.setFarbe(vorherigerZug.getZeile(),
+            spielfeld.setFarbe(
+                    vorherigerZug.getZeile(),
                     vorherigerZug.getSpalte(),
-                    farbe.opposite());
+                    farbe.opposite()
+            );
+
         Zug neuerZug;
         do {
-            var state = boardToString();
-            var validMoves = getValidMoves();
-            var actionIndex = qAgent.getAction(state, validMoves, false);
+            String state = boardToString();
+            boolean[] validMoves = getValidMoves();
+            int actionIndex = qAgent.getAction(state, validMoves, false);
 
             int zeile = actionIndex / 3;
             int spalte = actionIndex % 3;
-
             neuerZug = new Zug(zeile, spalte);
-        }
-        while (spielfeld.getFarbe(neuerZug.getZeile(), neuerZug.getSpalte()) != Farbe.Leer);
+
+        } while (spielfeld.getFarbe(neuerZug.getZeile(), neuerZug.getSpalte()) != Farbe.Leer);
+
         spielfeld.setFarbe(neuerZug.getZeile(), neuerZug.getSpalte(), farbe);
         return neuerZug;
     }
@@ -173,12 +189,7 @@ public class Spieler implements ILernenderSpieler {
         for (int row = 0; row < 3; row++) {
             for (int column = 0; column < 3; column++) {
                 Farbe cell = spielfeld.getFarbe(row, column);
-                if (cell == Farbe.Leer) {
-                    sb.append(".");
-                } else {
-                    // Wir nutzen den Namen der Farbe (z.B. "X", "O" oder "ROT")
-                    sb.append(cell.toString().charAt(0));
-                }
+                sb.append(cell == Farbe.Leer ? "." : cell.toString().charAt(0));
             }
         }
         return sb.toString();
@@ -193,8 +204,7 @@ public class Spieler implements ILernenderSpieler {
         int index = 0;
         for (int zeile = 0; zeile < 3; zeile++) {
             for (int spalte = 0; spalte < 3; spalte++) {
-                valid[index] = (spielfeld.getFarbe(zeile, spalte) == Farbe.Leer);
-                index++;
+                valid[index++] = (spielfeld.getFarbe(zeile, spalte) == Farbe.Leer);
             }
         }
         return valid;
